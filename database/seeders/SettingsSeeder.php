@@ -14,7 +14,7 @@ class SettingsSeeder extends Seeder
         Setting::truncate();
         $settings = new Setting;
         $settings->per_page = 20;
-        $settings->site_name = 'Snipe-IT Demo';
+        $settings->site_name = 'DP World';
         $settings->auto_increment_assets = 1;
         $settings->logo = 'snipe-logo.png';
         $settings->alert_email = 'service@snipe-it.io';
@@ -26,10 +26,9 @@ class SettingsSeeder extends Seeder
         $settings->full_multiple_companies_support = 0;
         $settings->label2_1d_type = 'C128';
         $settings->skin = 'blue';
-        $settings->email_domain = 'example.org';
+        $settings->email_domain = 'dpworld.com.ec';
         $settings->email_format = 'filastname';
         $settings->username_format = 'filastname';
-        $settings->date_display_format = 'D M d, Y';
         $settings->time_display_format = 'g:iA';
         $settings->thumbnail_max_h = '30';
         $settings->locale = 'en-US';

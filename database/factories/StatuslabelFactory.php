@@ -39,7 +39,7 @@ class StatuslabelFactory extends Factory
     {
         return $this->state(function () {
             return [
-                'notes' => $this->faker->sentence(),
+                'notes' => 'Estos activos ESTAN LISTOS para ser asignados a usuarios, lugares u otros equipos',
                 'deployable' => 1,
                 'default_label' => 1,
             ];
@@ -55,7 +55,7 @@ class StatuslabelFactory extends Factory
     {
         return $this->state(function () {
             return [
-                'notes' => $this->faker->sentence(),
+                'notes' => 'Estos activos TODAVIA NO pueden ser asignados debido a una falta de software o hardware, se espera que esten en circulación',
                 'pending' => 1,
                 'default_label' => 1,
             ];
@@ -66,12 +66,23 @@ class StatuslabelFactory extends Factory
     {
         return $this->state(function () {
             return [
-                'notes' => 'These assets are permanently undeployable',
+                'notes' => 'Estos activos estan APARTADOS del inventario activo o ya NO EXISTEN en la empresa',
                 'archived' => 1,
                 'default_label' => 0,
             ];
         });
     }
+
+    public function undeployable()
+    {
+        return $this->state(function () {
+            return [
+                'notes' => 'Estos activos NO PUEDEN ser asignados por varias razones o estan en PROCESO DE BAJA',
+                'default_label' => 0,
+            ];
+        });
+    }
+
 
     public function outForDiagnostics()
     {

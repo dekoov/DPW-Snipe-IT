@@ -49,7 +49,7 @@ class CategoryFactory extends Factory
     public function assetDesktopCategory()
     {
         return $this->state([
-            'name' => 'Desktops',
+            'name' => 'Desktop',
             'category_type' => 'asset',
             'require_acceptance' => true,
         ]);
@@ -59,7 +59,7 @@ class CategoryFactory extends Factory
     public function assetDisplayCategory()
     {
         return $this->state([
-            'name' => 'Displays',
+            'name' => 'Pantalla',
             'category_type' => 'asset',
         ]);
     }
@@ -68,7 +68,7 @@ class CategoryFactory extends Factory
      public function assetTabletCategory()
      {
          return $this->state([
-             'name' => 'Tablets',
+             'name' => 'Tablet',
              'category_type' => 'asset',
          ]);
      }
@@ -77,7 +77,7 @@ class CategoryFactory extends Factory
      public function assetMobileCategory()
      {
          return $this->state([
-             'name' => 'Mobile Phones',
+             'name' => 'Celular',
              'category_type' => 'asset',
          ]);
      }
@@ -86,7 +86,7 @@ class CategoryFactory extends Factory
      public function assetConferenceCategory()
      {
          return $this->state([
-             'name' => 'Conference Phones',
+             'name' => 'Telefono IP',
              'category_type' => 'asset',
          ]);
      }
@@ -96,7 +96,7 @@ class CategoryFactory extends Factory
      public function assetVoipCategory()
      {
          return $this->state([
-             'name' => 'VOIP Phones',
+             'name' => 'Telefono VOIP',
              'category_type' => 'asset',
          ]);
      }
@@ -105,7 +105,7 @@ class CategoryFactory extends Factory
      public function accessoryKeyboardCategory()
      {
          return $this->state([
-             'name' => 'Keyboards',
+             'name' => 'Teclado',
              'category_type' => 'accessory',
          ]);
      }
@@ -142,7 +142,7 @@ class CategoryFactory extends Factory
      public function consumablePaperCategory()
      {
          return $this->state([
-             'name' => 'Printer Paper',
+             'name' => 'Papel A4',
              'category_type' => 'consumable',
          ]);
      }
@@ -151,7 +151,7 @@ class CategoryFactory extends Factory
      public function consumableInkCategory()
      {
          return $this->state([
-             'name' => 'Printer Ink',
+             'name' => 'Toner',
              'category_type' => 'consumable',
          ]);
      }
@@ -160,7 +160,7 @@ class CategoryFactory extends Factory
      public function licenseGraphicsCategory()
      {
          return $this->state([
-             'name' => 'Graphics Software',
+             'name' => 'Software Grafico',
              'category_type' => 'license',
          ]);
      }
@@ -169,7 +169,7 @@ class CategoryFactory extends Factory
      public function licenseOfficeCategory()
      {
          return $this->state([
-             'name' => 'Office Software',
+             'name' => 'Software Oficina',
              'category_type' => 'license',
          ]);
      }

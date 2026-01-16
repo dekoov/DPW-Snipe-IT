@@ -195,7 +195,7 @@
 
     @include('partials.specs-table-with-toolbar', [
         'items' => $show_user->consumables,
-        'type' => 'Consumable',
+        'type' => 'consumable',
         'title' => 'Consumibles',
         'getCategoryCallback' => function($item) {
             return $item->category && $item->category ? $item->category->name : 'Invalido';

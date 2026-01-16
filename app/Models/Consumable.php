@@ -108,6 +108,19 @@ class Consumable extends SnipeModel
     ];
 
 
+  public function getSpecsDisplayAttribute(){
+
+    $specs = [
+      'Nombre' => $this->name ?? 'N/A',
+      'Modelo' => $this->model_number ?? 'N/A',
+      'Fabricante' => $this->manufacturer->name ?? 'N/A',
+      'Orden de compra' => $this->order_number ?? 'N/A',
+      'Observaciones' => $this->notes ?? 'N/A',
+
+    ];
+
+    return $specs;
+  }
 
 
     /**

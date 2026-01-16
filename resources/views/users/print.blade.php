@@ -50,6 +50,11 @@
             margin-bottom: 10px;
         }
 
+        .table-usuarios-info td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
         .row-excluded {
             background-color: #f9f9f9 !important;
             opacity: 0.3;
@@ -88,24 +93,6 @@
     </div>
 @endif
 
-{{-- @if ($snipeSettings->logo_print_assets == '1')
-@if ($snipeSettings->brand == '3')
-
-<h2>
-@if ($snipeSettings->acceptance_pdf_logo != '')
-<img class="print-logo" src="{{ config('app.url') }}/uploads/{{ $snipeSettings->acceptance_pdf_logo }}">
-@endif
-{{ $snipeSettings->site_name }}
-</h2>
-@elseif ($snipeSettings->brand == '2')
-@if ($snipeSettings->acceptance_pdf_logo != '')
-<img class="print-logo" src="{{ config('app.url') }}/uploads/{{ $snipeSettings->acceptance_pdf_logo }}">
-@endif
-@else
-<h2>{{ $snipeSettings->site_name }}</h2>
-@endif
-@endif --}}
-
 @foreach ($users as $show_user)
     @php
         $count++;
@@ -133,7 +120,7 @@
         </tr>
     </table>
 
-    <table class=" table table-bordered table-condensed"
+    <table class="table table-bordered table-condensed table-usuarios-info"
         style="margin-bottom: 20px; margin-top: 20px; width: 100%;">
         <tr>
             <th style="background-color: #0A4378; color: #fff; text-align: right; font-weight: bold">
@@ -169,18 +156,18 @@
         'items' => $show_user->assets,
         'type' => 'asset',
         'title' => 'Equipos',
-        'getCategoryCallback' => function($item) {
+        'getCategoryCallback' => function ($item) {
             return $item->model && $item->model->category ? $item->model->category->name : 'Invalido';
-        }
+        },
     ])
 
     @include('partials.specs-table-with-toolbar', [
         'items' => $show_user->licenses,
         'type' => 'license',
         'title' => 'Licencias',
-        'getCategoryCallback' => function($item) {
+        'getCategoryCallback' => function ($item) {
             return $item->category && $item->category ? $item->category->name : 'Invalido';
-        }
+        },
     ])
 
 
@@ -188,76 +175,77 @@
         'items' => $show_user->accessories,
         'type' => 'accessory',
         'title' => 'Accesorios',
-        'getCategoryCallback' => function($item) {
+        'getCategoryCallback' => function ($item) {
             return $item->category && $item->category ? $item->category->name : 'Invalido';
-        }
+        },
     ])
 
     @include('partials.specs-table-with-toolbar', [
         'items' => $show_user->consumables,
         'type' => 'consumable',
         'title' => 'Consumibles',
-        'getCategoryCallback' => function($item) {
+        'getCategoryCallback' => function ($item) {
             return $item->category && $item->category ? $item->category->name : 'Invalido';
-        }
+        },
     ])
 
-@php
-    if (!empty($eulas)) {
-        $eulas = array_unique($eulas);
-    }
-@endphp
-{{-- This may have been render at the top of the page if we're rendering more than one user... --}}
-@if (count($users) === 1 && !empty($eulas))
-    <p></p>
-    <div class="pull-right">
-        <button class="btn btn-default hidden-print" type="button" data-toggle="collapse"
-            data-target=".eula-row" aria-expanded="false" aria-controls="eula-row" title="EULAs">
-            <i class="fa fa-eye-slash"></i>
-        </button>
-    </div>
-@endif
+    <div id="start_of_user_section"> {{-- used for page breaks when printing --}}</div>
 
-<table style="margin-top: 80px;" class="{{ count($users) > $count ? 'signature-boxes' : '' }}">
-    @if (!empty($eulas))
-        <tr class="collapse eula-row">
-            <td style="padding-right: 10px; vertical-align: top; font-weight: bold;">EULA</td>
-            <td style="padding-right: 10px; vertical-align: top; padding-bottom: 80px;" colspan="3">
-                @foreach ($eulas as $key => $eula)
-                    {!! $eula !!}
-                @endforeach
-            </td>
-        </tr>
+    @php
+        if (!empty($eulas)) {
+            $eulas = array_unique($eulas);
+        }
+    @endphp
+    {{-- This may have been render at the top of the page if we're rendering more than one user... --}}
+    @if (count($users) === 1 && !empty($eulas))
+        <p></p>
+        <div class="pull-right">
+            <button class="btn btn-default hidden-print" type="button" data-toggle="collapse"
+                data-target=".eula-row" aria-expanded="false" aria-controls="eula-row" title="EULAs">
+                <i class="fa fa-eye-slash"></i>
+            </button>
+        </div>
     @endif
-    <tr>
-        <td style="padding-right: 10px; vertical-align: top; font-weight: bold;">
-            {{ trans('general.signed_off_by') }}:</td>
-        <td style="padding-right: 10px; vertical-align: top;">______________________________________</td>
-        <td style="padding-right: 10px; vertical-align: top;">______________________________________</td>
-        <td>_____________</td>
-    </tr>
-    <tr style="height: 80px;">
-        <td></td>
-        <td style="padding-right: 10px; vertical-align: top;">{{ trans('general.name') }}</td>
-        <td style="padding-right: 10px; vertical-align: top;">{{ trans('general.signature') }}</td>
-        <td style="padding-right: 10px; vertical-align: top;">{{ trans('general.date') }}</td>
-    </tr>
-    <tr>
-        <td style="padding-right: 10px; vertical-align: top; font-weight: bold;">
-            {{ trans('admin/users/table.manager') }}:</td>
-        <td style="padding-right: 10px; vertical-align: top;">______________________________________</td>
-        <td style="padding-right: 10px; vertical-align: top;">______________________________________</td>
-        <td>_____________</td>
-    </tr>
-    <tr>
-        <td></td>
-        <td style="padding-right: 10px; vertical-align: top;">{{ trans('general.name') }}</td>
-        <td style="padding-right: 10px; vertical-align: top;">{{ trans('general.signature') }}</td>
-        <td style="padding-right: 10px; vertical-align: top;">{{ trans('general.date') }}</td>
-        <td></td>
-    </tr>
 
-</table>
+    {{-- Firmas - Estas 2 tablas deben estar en linea y centradas horizontal y verticalmente --}}
+    <div
+        style="display: flex; justify-content: space-around; align-items: center; margin-top: 40px; margin-bottom: 40px;">
+        <table class="table table-bordered" style="margin-bottom: 20px; width: 25%">
+            <thead>
+                <tr style="background-color: #0A4378; color: #fff;">
+                    <td style="text-align: center; font-weight: bold;">REVISADO POR:</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="height: 80px;">
+                    <td>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center">{{ Auth::user()->name }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-bordered" style="margin-bottom: 20px; width: 25%">
+            <thead>
+                <tr style="background-color: #0A4378; color: #fff;">
+                    <td style="text-align: center; font-weight: bold;">RECIBE:</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="height: 80px;">
+                    <td>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center">{{ $show_user->display_name }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 @endforeach
 
 {{-- Javascript files --}}
@@ -288,16 +276,16 @@
             var toolbarId = '#' + type + '-specs-toolbar';
             var $table = $(toolbarId).next('table');
             if ($table.length === 0) return;
-            
+
             var tbody = $table.find('tbody');
             var groupStartRow = null;
             var visibleCount = 0;
             var rowClass = type + '-spec-row';
             var separatorClass = type + '-separator';
-            
+
             tbody.find('tr').each(function() {
                 var $row = $(this);
-                
+
                 // Si es una fila separadora, reiniciar el grupo
                 if ($row.hasClass(separatorClass)) {
                     if (groupStartRow && visibleCount > 0) {
@@ -307,18 +295,18 @@
                     visibleCount = 0;
                     return;
                 }
-                
+
                 // Si es una fila de especificación
                 if ($row.hasClass(rowClass)) {
                     var $categoryCell = $row.find('td.active');
-                    
+
                     // Si tiene celda de categoría, es el inicio de un nuevo grupo
                     if ($categoryCell.length > 0) {
                         // Guardar el rowspan anterior si existe
                         if (groupStartRow && visibleCount > 0) {
                             groupStartRow.find('td.active').attr('rowspan', visibleCount);
                         }
-                        
+
                         // Iniciar nuevo grupo
                         groupStartRow = $row;
                         visibleCount = $row.is(':visible') ? 1 : 0;
@@ -330,44 +318,45 @@
                     }
                 }
             });
-            
+
             // Ajustar el último grupo
             if (groupStartRow && visibleCount > 0) {
                 groupStartRow.find('td.active').attr('rowspan', visibleCount);
             }
         }
-        
+
         // Función genérica para manejar el cambio de checkboxes
         function setupFieldToggle(type) {
             var toggleClass = '.' + type + '-field-toggle';
             var rowClass = '.' + type + '-spec-row';
-            
+
             // Configurar el evento change para los checkboxes
             $(document).on('change', toggleClass, function() {
                 var $checkbox = $(this);
-                var isRequired = $checkbox.data('required') === 'true' || $checkbox.data('required') === true;
-                
+                var isRequired = $checkbox.data('required') === 'true' || $checkbox.data('required') ===
+                    true;
+
                 // Si es un campo requerido (primer campo), no permitir ocultarlo
                 if (isRequired && !$checkbox.is(':checked')) {
                     $checkbox.prop('checked', true);
                     return;
                 }
-                
+
                 var fieldId = $checkbox.data('field');
                 var isChecked = $checkbox.is(':checked');
                 var rows = $(rowClass + '[data-field="' + fieldId + '"]');
-                
+
                 if (isChecked) {
                     rows.show();
                 } else {
                     rows.hide();
                 }
-                
+
                 // Ajustar rowspan de las celdas de categoría cuando se ocultan filas
                 adjustCategoryRowspans(type);
             });
         }
-        
+
         // Inicializar para cada tipo de elemento
         var types = ['asset', 'license', 'accessory', 'consumable'];
         types.forEach(function(type) {

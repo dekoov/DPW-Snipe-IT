@@ -122,6 +122,25 @@ class License extends Depreciable
     ];
     protected $appends = ['free_seat_count'];
 
+  /**
+  * Método visualizador de especificaciones
+  * de un activo para mostrar en la interfaz
+  */
+  public function getSpecsDisplayAttribute(){
+
+    $specs = [
+      'Nombre' => $this->name ?? 'N/A',
+      'Fabricante' => $this->manufacturer->name ?? 'N/A',
+      'Serial' => $this->serial ?? 'N/A',
+      'Orden de compra'=> $this->order_number ?? 'N/A',
+      'Fecha de Expiracion' => $this->expiration_date ?? 'N/A',
+      'Observaciones' => $this->notes ?? 'N/A',
+
+    ];
+
+    return $specs;
+  }
+
     /**
      * Update seat counts when the license is updated
      *

@@ -24,10 +24,10 @@ services:
       retries: 6
 
   redis:
-    image: redis:8.4.3
+    image: redis:latest
 
   mailhog:
-    image: mailhog/mailhog:v2.0.1
+    image: mailhog/mailhog:latest
     ports:
       # - 1026:1025
       - "8026:8025"

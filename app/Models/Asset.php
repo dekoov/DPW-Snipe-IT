@@ -208,6 +208,43 @@ class Asset extends Depreciable
         'model.manufacturer' => ['name'],
     ];
 
+  /**
+  * Método visualizador de especificaciones
+  * de un activo para mostrar en la interfaz
+  */
+  public function getSpecsDisplayAttribute(){
+
+    $specs = [
+      'Asset Tag' => $this->asset_tag,
+      'Nombre' => $this->name ?? 'N/A',
+      'Marca' => $this->model->manufacturer->name ?? 'N/A',
+      'Modelo' => $this->model->name ?? 'N/A',
+      'Serie' => $this->serial ?? 'N/A',
+
+    ];
+
+    if ($this->model && $this->model->fieldset && $this->model->fieldset->fields->count() > 0){
+      
+      foreach ($this->model->fieldset->fields as $field){
+        $db_column = $field->db_column;
+
+        $rawValue = $this->{$db_column};
+
+        if($field->format == 'BOOLEAN'){
+          $displayValue = filter_var($rawValue, FILTER_VALIDATE_BOOLEAN) ? 'Sí' : 'No';
+        } elseif (empty($rawValue)) {
+          $displayValue = 'N/A';
+        } else {
+          $displayValue = $rawValue;
+        }
+
+      $specs[$field->name] = $displayValue;
+
+      }
+    }
+    return $specs;
+  }
+
     protected static function booted(): void
     {
         static::forceDeleted(function (Asset $asset) {

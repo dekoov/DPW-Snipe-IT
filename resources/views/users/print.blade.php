@@ -71,13 +71,24 @@
             }
 
         }
+
+        media print {
+            th {
+                background-color: #0A4378 !important;
+                color: #ffffff !important;
+
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            table {
+                border-collapse: collapse;
+            }
+        }
     </style>
-
-
 </head>
 
 <body>
-
 @php
     $count = 0;
 @endphp
@@ -192,6 +203,31 @@
     <div id="start_of_user_section"> {{-- used for page breaks when printing --}}</div>
 
     @php
+        $eulas = [];
+        foreach ($show_user->assets as $asset) {
+            if ($asset->model && $asset->model->category && $asset->model->category->getEula()) {
+                $eulas[] = $asset->model->category->getEula();
+            }
+        }
+        foreach ($show_user->licenses as $license) {
+            if ($license->category && $license->category->getEula()) {
+                $eulas[] = $license->category->getEula();
+            }
+        }
+        foreach ($show_user->accessories as $accessory) {
+            if ($accessory->category && $accessory->category->getEula()) {
+                $eulas[] = $accessory->category->getEula();
+            }
+        }
+        foreach ($show_user->consumables as $consumable) {
+            if ($consumable->category && $consumable->category->getEula()) {
+                $eulas[] = $consumable->category->getEula();
+            }
+        }
+    @endphp
+
+
+    @php
         if (!empty($eulas)) {
             $eulas = array_unique($eulas);
         }
@@ -206,6 +242,15 @@
             </button>
         </div>
     @endif
+
+    @foreach ($eulas as $eula)
+        <div class="collapse eula-row" style="margin-top: 20px; margin-bottom: 20px;">
+            <div style="border: 1px solid #d3d3d3; padding: 10px; max-height: 400px; overflow-y: auto;">
+                {!! $eula !!}
+            </div>
+        </div>
+    @endforeach
+
 
     {{-- Firmas - Estas 2 tablas deben estar en linea y centradas horizontal y verticalmente --}}
     <div

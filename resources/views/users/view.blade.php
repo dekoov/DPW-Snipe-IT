@@ -40,6 +40,17 @@
         </li>
 
         <li>
+          <a href="#actas" data-toggle="tab">
+            <span class="hidden-lg hidden-md">
+              <x-icon type="file-text" class="fa-2x" />
+            </span>
+            <span class="hidden-xs hidden-sm">
+              Generacion de Actas
+            </span>
+          </a>
+        </li>
+
+        <li>
           <a href="#asset" data-toggle="tab">
             <span class="hidden-lg hidden-md">
             <x-icon type="assets" class="fa-2x" />
@@ -830,6 +841,264 @@
           </div> <!--/.row-->
         </div><!-- /.tab-pane -->
 
+        <div class="tab-pane" id="actas">
+          <!-- Tabla consolidada de todos los activos asignados -->
+          
+          <div id="actasBulkEditToolbar" style="min-width:400px">
+            <form
+              method="POST"
+              action="#"
+              accept-charset="UTF-8"
+              class="form-inline"
+              id="actasBulkForm"
+            >
+              @csrf
+              <input name="sort" type="hidden" value="name">
+              <input name="order" type="hidden" value="asc">
+              <label for="bulk_actions">
+                <span class="sr-only">
+                  {{ trans('button.bulk_actions') }}
+                </span>
+              </label>
+              <select name="bulk_actions" class="form-control select2" aria-label="bulk_actions" style="min-width: 350px !important;">
+                <option value="print">{{ trans('admin/users/general.print_assigned') }}</option>
+                <option value="export">{{ trans('general.export') }}</option>
+              </select>
+              <button class="btn btn-theme" id="bulkActasEditButton" disabled>{{ trans('button.go') }}</button>
+            </form>
+          </div>
+
+          <table
+            data-cookie-id-table="userActasTable"
+            data-id-table="userActasTable"
+            id="userActasTable"
+            data-buttons="actasButtons"
+            data-side-pagination="client"
+            data-show-footer="true"
+            data-sort-name="tipo"
+            data-toolbar="#actasBulkEditToolbar"
+            data-bulk-button-id="#bulkActasEditButton"
+            data-bulk-form-id="#actasBulkForm"
+            data-click-to-select="true"
+            data-unique-id="id_original"
+            class="table table-striped snipe-table table-hover"
+            data-export-options='{
+              "fileName": "export-actas-{{ str_slug($user->username) }}-{{ date('Y-m-d') }}",
+              "ignoreColumn": ["actions","checkbox"]
+            }'>
+            <thead>
+              <tr>
+                <th data-checkbox="true" data-click-to-select="true"></th>
+                <th data-field="tipo" data-sortable="true">{{ trans('general.type') }}</th>
+                <th data-field="nombre" data-sortable="true">{{ trans('general.name') }}</th>
+                <th data-field="categoria" data-sortable="true">{{ trans('general.category') }}</th>
+                <th data-field="modelo" data-sortable="true">{{ trans('admin/hardware/form.model') }}</th>
+                <th data-field="numero_serie" data-sortable="true">{{ trans('admin/hardware/table.serial') }}</th>
+                <th data-field="fecha_asignacion" data-sortable="true">{{ trans('general.date') }}</th>
+                <th data-field="costo" data-sortable="true" data-footer-formatter="sumFormatter" data-fieldname="costo">{{ trans('general.purchase_cost') }}</th>
+                <th data-field="estado" data-sortable="true">{{ trans('general.status') }}</th>
+                <th data-field="id_original" data-visible="false">{{ trans('general.id') }}</th>
+                <th data-field="tipo_original" data-visible="false">Tipo Original</th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach ($user->assets()->AssetsForShow()->withoutTrashed()->get() as $asset)
+              <tr data-unique-id="asset_{{ $asset->id }}">
+                <td></td>
+                <td>
+                  <span class="label label-primary">
+                    <x-icon type="assets" />
+                    {{ trans('general.assets') }}
+                  </span>
+                </td>
+                <td>
+                  @can('view', $asset)
+                    <a href="{{ route('hardware.show', $asset->id) }}">
+                      {{ $asset->present()->name() }}
+                    </a>
+                  @else
+                    {{ $asset->present()->name() }}
+                  @endcan
+                </td>
+                <td>
+                  @if ($asset->model && $asset->model->category)
+                    {{ $asset->model->category->name }}
+                  @else
+                    --
+                  @endif
+                </td>
+                <td>
+                  @if ($asset->model)
+                    {{ $asset->model->name }}
+                  @else
+                    --
+                  @endif
+                </td>
+                <td>{{ $asset->serial ?? '--' }}</td>
+                <td>
+                  @if ($asset->last_checkout)
+                    {{ \App\Helpers\Helper::getFormattedDateObject($asset->last_checkout, 'date', false) }}
+                  @else
+                    --
+                  @endif
+                </td>
+                <td data-costo="{{ $asset->purchase_cost ?? 0 }}">{{ \App\Helpers\Helper::formatCurrencyOutput($asset->purchase_cost ?? 0) }}</td>
+                <td>
+                  @if ($asset->assetstatus)
+                    <span class="label label-{{ $asset->assetstatus->getStatuslabelType() }}">
+                      {{ $asset->assetstatus->name }}
+                    </span>
+                  @else
+                    --
+                  @endif
+                </td>
+                <td>asset_{{ $asset->id }}</td>
+                <td>asset</td>
+              </tr>
+              @endforeach
+
+              @foreach ($user->licenses as $license)
+              <tr data-unique-id="license_{{ $license->pivot->id ?? $license->id }}">
+                <td></td>
+                <td>
+                  <span class="label label-info">
+                    <x-icon type="licenses" />
+                    {{ trans('general.licenses') }}
+                  </span>
+                </td>
+                <td>
+                  @can('view', $license)
+                    <a href="{{ route('licenses.show', $license->id) }}">
+                      {{ $license->name }}
+                    </a>
+                  @else
+                    {{ $license->name }}
+                  @endcan
+                </td>
+                <td>
+                  @if ($license->category)
+                    {{ $license->category->name }}
+                  @else
+                    --
+                  @endif
+                </td>
+                <td>--</td>
+                <td>
+                  @can('viewKeys', $license)
+                    <code class="single-line">{{ $license->serial }}</code>
+                  @else
+                    ------------
+                  @endcan
+                </td>
+                <td>
+                  @if ($license->pivot && $license->pivot->created_at)
+                    {{ \App\Helpers\Helper::getFormattedDateObject($license->pivot->created_at, 'date', false) }}
+                  @else
+                    --
+                  @endif
+                </td>
+                <td data-costo="{{ $license->purchase_cost ?? 0 }}">{{ \App\Helpers\Helper::formatCurrencyOutput($license->purchase_cost ?? 0) }}</td>
+                <td>
+                  @if ($license->depreciation)
+                    <span class="label label-default">{{ trans('general.active') }}</span>
+                  @else
+                    <span class="label label-success">{{ trans('general.active') }}</span>
+                  @endif
+                </td>
+                <td>license_{{ $license->pivot->id ?? $license->id }}</td>
+                <td>license</td>
+              </tr>
+              @endforeach
+
+              @foreach ($user->accessories as $accessory)
+              <tr data-unique-id="accessory_{{ $accessory->pivot->id ?? $accessory->id }}">
+                <td></td>
+                <td>
+                  <span class="label label-warning">
+                    <x-icon type="accessories" />
+                    {{ trans('general.accessories') }}
+                  </span>
+                </td>
+                <td>
+                  @can('view', $accessory)
+                    <a href="{{ route('accessories.show', $accessory->id) }}">
+                      {{ $accessory->name }}
+                    </a>
+                  @else
+                    {{ $accessory->name }}
+                  @endcan
+                </td>
+                <td>
+                  @if ($accessory->category)
+                    {{ $accessory->category->name }}
+                  @else
+                    --
+                  @endif
+                </td>
+                <td>--</td>
+                <td>--</td>
+                <td>
+                  @if ($accessory->pivot && $accessory->pivot->created_at)
+                    {{ \App\Helpers\Helper::getFormattedDateObject($accessory->pivot->created_at, 'date', false) }}
+                  @else
+                    --
+                  @endif
+                </td>
+                <td data-costo="{{ $accessory->purchase_cost ?? 0 }}">{{ \App\Helpers\Helper::formatCurrencyOutput($accessory->purchase_cost ?? 0) }}</td>
+                <td>
+                  <span class="label label-success">{{ trans('general.assigned') }}</span>
+                </td>
+                <td>accessory_{{ $accessory->pivot->id ?? $accessory->id }}</td>
+                <td>accessory</td>
+              </tr>
+              @endforeach
+
+              @foreach ($user->consumables as $consumable)
+              <tr data-unique-id="consumable_{{ $consumable->pivot->id ?? $consumable->id }}">
+                <td></td>
+                <td>
+                  <span class="label label-success">
+                    <x-icon type="consumables" />
+                    {{ trans('general.consumables') }}
+                  </span>
+                </td>
+                <td>
+                  @can('view', $consumable)
+                    <a href="{{ route('consumables.show', $consumable->id) }}">
+                      {{ $consumable->name }}
+                    </a>
+                  @else
+                    {{ $consumable->name }}
+                  @endcan
+                </td>
+                <td>
+                  @if ($consumable->category)
+                    {{ $consumable->category->name }}
+                  @else
+                    --
+                  @endif
+                </td>
+                <td>--</td>
+                <td>--</td>
+                <td>
+                  @if ($consumable->pivot && $consumable->pivot->created_at)
+                    {{ \App\Helpers\Helper::getFormattedDateObject($consumable->pivot->created_at, 'date', false) }}
+                  @else
+                    --
+                  @endif
+                </td>
+                <td data-costo="{{ $consumable->purchase_cost ?? 0 }}">{{ \App\Helpers\Helper::formatCurrencyOutput($consumable->purchase_cost ?? 0) }}</td>
+                <td>
+                  <span class="label label-info">{{ trans('general.assigned') }}</span>
+                </td>
+                <td>consumable_{{ $consumable->pivot->id ?? $consumable->id }}</td>
+                <td>consumable</td>
+              </tr>
+              @endforeach
+            </tbody>
+          </table>
+        </div><!-- /actas-tab -->
+
         <div class="tab-pane" id="asset">
           <!-- checked out assets table -->
 
@@ -1209,6 +1478,60 @@ $(function () {
         document.cookie = "optional_info_open="+optional_info_open+'; path=/';
     });
 });
+</script>
+<script>
+  $(document).ready(function () {
+    // Referencias a los objetos
+    var $table = $('#userActasTable');
+    var $btn   = $('#bulkActasEditButton');
+    var $form  = $('#actasBulkForm');
+
+    $btn.click(function (e) {
+        // 1. Detener el envío automático
+        e.preventDefault(); 
+
+        var action = $('select[name="bulk_actions"]').val();
+
+        // Si no hay acción seleccionada, avisar y salir
+        if (action == '') {
+            alert('Por favor selecciona una acción.');
+            return;
+        }
+
+        // 2. Obtener los datos seleccionados de la tabla (Bootstrap Table)
+        var selections = $table.bootstrapTable('getSelections');
+
+        // Validar que haya al menos un item seleccionado
+        if (selections.length === 0) {
+            alert('Por favor selecciona al menos un ítem de la lista.');
+            return;
+        }
+
+        // 3. Limpiar inputs previos (para evitar duplicados si dan clic varias veces)
+        $form.find('input[name="ids[]"]').remove();
+
+        // 4. Inyectar los IDs seleccionados al formulario como inputs ocultos
+        // El controlador espera un array llamado 'ids' con valores como 'asset_1', 'license_5'
+        $.each(selections, function (index, row) {
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'ids[]',
+                value: row.id_original // Este campo lo definimos en tu HTML (asset_X, license_Y)
+            }).appendTo($form);
+        });
+
+        // 5. Configurar la ruta y enviar según la acción
+        if (action == 'print') {
+            // CORRECCIÓN IMPORTANTE: Usamos la ruta específica y pasamos el ID del usuario
+            $form.attr('action', "{{ route('users.print-selected', $user->id) }}"); 
+            $form.attr('target', '_blank'); // Abrir PDF en nueva pestaña
+            $form.submit();
+        } 
+        else if (action == 'export') {
+            alert("Funcionalidad de exportación pendiente de ruta.");
+        }
+    });
+  });
 </script>
 
 

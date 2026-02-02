@@ -105,6 +105,23 @@ class Accessory extends SnipeModel
         'notes',
     ];
 
+  /**
+  * Método visualizador de especificaciones
+  * de un activo para mostrar en la interfaz
+  */
+  public function getSpecsDisplayAttribute(){
+
+    $specs = [
+      'Nombre' => $this->name ?? 'N/A',
+      'Marca' => $this->model->manufacturer->name ?? 'N/A',
+      'Modelo' => $this->model_number ?? 'N/A',
+      'Serie' => $this->serial ?? 'N/A',
+
+    ];
+    return $specs;
+  }
+
+
 
     /**
      * Establishes the accessory -> supplier relationship

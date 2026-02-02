@@ -84,6 +84,7 @@
     "ext-exif": "*"
   },
   "require-dev": {
+    "barryvdh/laravel-ide-helper": "^3.6",
     "larastan/larastan": "^2.9",
     "laravel/telescope": "^5.11",
     "mockery/mockery": "^1.4",

@@ -657,6 +657,62 @@ class UsersController extends Controller
     }
 
     /**
+     * Print selected inventory
+     *
+    **/
+    public function printSelectedInventory(\Illuminate\Http\Request $request, $userId)
+    {
+        // 1. Autorización
+        $this->authorize('view', \App\Models\User::class);
+
+        // 2. Recibir los IDs del JavaScript (ej: ['asset_1', 'license_5'])
+        $mixedIds = $request->input('ids', []); 
+
+        $assetIds = [];
+        $licenseIds = [];
+        $accessoryIds = [];
+        $consumableIds = [];
+
+        // 3. Separar los IDs por tipo
+        foreach ($mixedIds as $mixedId) {
+            $parts = explode('_', $mixedId);
+            if (count($parts) < 2) continue; 
+            
+            $type = $parts[0];
+            $id   = $parts[1];
+
+            if ($type == 'asset') $assetIds[] = $id;
+            if ($type == 'license') $licenseIds[] = $id;
+            if ($type == 'accessory') $accessoryIds[] = $id;
+            if ($type == 'consumable') $consumableIds[] = $id;
+        }
+
+        // 4. Buscar al usuario y filtrar sus relaciones con las IDs separadas
+        $user = \App\Models\User::where('id', $userId)
+            ->with([
+                'assets' => function ($q) use ($assetIds) { 
+                    $q->whereIn('assets.id', $assetIds)->with('model.category', 'location'); 
+                },
+                'licenses' => function ($q) use ($licenseIds) { 
+                    $q->wherePivotIn('id', $licenseIds); 
+                },
+                'accessories' => function ($q) use ($accessoryIds) { 
+                    $q->wherePivotIn('id', $accessoryIds);
+                },
+                'consumables' => function ($q) use ($consumableIds) { 
+                    $q->wherePivotIn('id', $consumableIds);
+                }
+        ])
+            ->firstOrFail();
+
+        // 5. Retornar la vista exacta que indicaste: users/print.blade.php
+        return view('users.print')
+            ->with('user', $user)          // Para uso individual en la vista
+            ->with('users', [$user])       // Snipe-IT suele iterar sobre 'users'
+            ->with('settings', \App\Models\Setting::getSettings());
+    }
+
+    /**
      * Emails user a list of assigned assets
      *
      * @author [G. Martinez] [<godmartinz@gmail.com>]

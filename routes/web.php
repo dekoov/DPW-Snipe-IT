@@ -456,6 +456,9 @@ Route::group(['prefix' => 'account', 'middleware' => ['auth']], function () {
     Route::post('accept/{id}', [Account\AcceptanceController::class, 'store'])
         ->name('account.store-acceptance');
 
+    Route::post('users/{id}/print-selected', [\App\Http\Controllers\Users\UsersController::class, 'printSelectedInventory'])
+      ->name('users.print-selected');
+
     Route::get(
         'print',
         [

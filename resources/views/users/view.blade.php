@@ -51,6 +51,17 @@
         </li>
 
         <li>
+          <a href="#devoluciones" data-toggle="tab">
+            <span class="hidden-lg hidden-md">
+              <x-icon type="file-text" class="fa-2x" />
+            </span>
+            <span class="hidden-xs hidden-sm">
+              Generacion de Devoluciones
+            </span>
+          </a>
+        </li>
+
+        <li>
           <a href="#asset" data-toggle="tab">
             <span class="hidden-lg hidden-md">
             <x-icon type="assets" class="fa-2x" />
@@ -1099,6 +1110,99 @@
           </table>
         </div><!-- /actas-tab -->
 
+
+        <div class="tab-pane" id="devoluciones">
+
+            <div id="devolucionesBulkEditToolbar" style="min-widht:400px">
+                <form 
+                    method="POST"
+                    action="{{ route('users.print-return', $user->id) }}"
+                    id="devolucionesBulkForm"
+                    class="form-inline"
+                >
+                    @csrf
+                    <input name="sort" type="hidden" value="name">
+                    <input name="order" type="hidden" value="asc">
+                    <label for="bulk_actions">
+                        <span class="sr-only">
+                        {{ trans('button.bulk_actions') }}
+                        </span>
+                    </label>
+                    <select name="bulk_actions" class="form-control select2" aria-label="bulk_actions" style="min-width: 350px !important;">
+                        <option value="print">{{ trans('admin/users/general.print_assigned') }}</option>
+                        <option value="export">{{ trans('general.export') }}</option>
+                    </select>
+                    <button class="btn btn-theme" id="bulkDevolucionesEditButton" disabled>{{ trans('button.go') }}</button>
+                    
+                </form>
+            </div>
+            <table
+                data-cookie-id-table="usersDevolucionesTable"
+                data-id-table="usersDevolucionesTable"
+                id="userDevolucionesTable"
+                data-buttons="devolucionesButtons"
+                data-side-pagination="client"
+                data-show-footer="true"
+                data-sort-name="tipo"
+                data-toolbar="#devolucionesEditBulkToolbar"
+                data-bulk-button-id="#bulkDevolucionesEditButton"
+                data-bulk-form-id="#devolucionesBulkForm"
+                data-click-to-select="true"
+                data-search="true"
+                data-unique-id="id_original"
+                class="table table-striped snipe-table table-hover"
+                data-export-options='{
+                    "fileName": "export-devoluciones-{{ str_slug($user->username) }}-{{ date('Y-m-d') }}",
+                    "ignoreColumn": ["actions","checkbox"]
+                }'>
+                <thead>
+                    <tr>
+                        <th data-checkbox="true" data-click-to-select="true"></th>
+                        <th data-field="id" data-sortable="true">ID</th>
+                        <th data-field="fecha_devolucion" data-sortable="true">Fecha Devolución</th>
+                        <th data-field="item" data-sortable="true">Ítem</th>
+                        <th data-field="tipo" data-sortable="true">Tipo</th>
+                        <th data-field="serial" data-sortable="true">Serial / Tag</th>
+                        <th data-field="recibido_por" data-sortable="true">Recibido Por</th>
+                        <th data-field="notas" data-sortable="true">Notas</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {{-- Iteramos sobre el historial del usuario --}}
+                    @foreach($user->userlog as $log)
+                        {{-- FILTRO: Solo mostramos 'checkin from' (Devoluciones) --}}
+                        @if($log->action_type == 'checkin from')
+                            <tr>
+                                <td></td>
+                                <td>{{ $log->id }}</td> {{-- Este es el ID que enviaremos al controlador --}}
+                                <td>{{ $log->created_at->format('d/m/Y H:i') }}</td>
+                                <td>
+                                    @if($log->item)
+                                        {{ $log->item->name ?? $log->item->title }}
+                                    @else
+                                        (Elemento Eliminado)
+                                    @endif
+                                </td>
+                                <td>{{ $log->item_type }}</td>
+                                <td>
+                                    @if($log->item)
+                                        {{ $log->item->serial ?? $log->item->asset_tag ?? '--' }}
+                                    @endif
+                                </td>
+                                <td>
+                                    {{ $log->admin ? $log->admin->present()->fullName() : 'Sistema' }}
+                                </td>
+                                <td>{{ $log->note }}</td>
+                            </tr>
+                        @endif
+                    @endforeach
+                </tbody>
+            </table>
+            
+        </div>
+        
+
         <div class="tab-pane" id="asset">
           <!-- checked out assets table -->
 
@@ -1532,6 +1636,38 @@ $(function () {
         }
     });
   });
+</script>
+
+<script>
+    // Script simple para habilitar el botón al seleccionar checkbox
+$(function () {
+    var $table = $('#userReturnsTable');
+    var $btn = $('#bulkReturnsButton');
+
+    $table.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
+        // Habilita el botón si hay al menos 1 seleccionado
+        $btn.prop('disabled', !$table.bootstrapTable('getSelections').length);
+    });
+    
+    // Al hacer click, recolectar IDs e inyectarlos al form
+    $btn.click(function (e) {
+        e.preventDefault();
+        var selections = $table.bootstrapTable('getSelections');
+        var ids = $.map(selections, function (row) {
+            return row.id; // Obtenemos el ID del LOG oculto en la columna 2
+        });
+        
+        // Crear input hidden dinámico
+        var form = $('#returnsBulkForm');
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'ids[]',
+            value: ids
+        }).appendTo(form);
+        
+        form.submit();
+    });
+});
 </script>
 
 

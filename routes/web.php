@@ -3,6 +3,7 @@
 use App\Http\Controllers\Account;
 use App\Http\Controllers\ActionlogController;
 use App\Http\Controllers\Api\ImportController;
+use App\Http\Controllers\Api\UsersController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
@@ -455,6 +456,9 @@ Route::group(['prefix' => 'account', 'middleware' => ['auth']], function () {
 
     Route::post('accept/{id}', [Account\AcceptanceController::class, 'store'])
         ->name('account.store-acceptance');
+
+    Route::post('users/{id}/print-return', [\App\Http\Controllers\Users\UsersController::class, 'printReturnSelected'])
+        ->name('users.print-return');
 
     Route::post('users/{id}/print-selected', [\App\Http\Controllers\Users\UsersController::class, 'printSelectedInventory'])
       ->name('users.print-selected');

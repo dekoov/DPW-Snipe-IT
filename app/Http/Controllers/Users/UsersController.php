@@ -615,6 +615,36 @@ class UsersController extends Controller
     }
 
     /**
+    * Generacion Acta de Devolucion
+    * basado en logs seleccionados
+    */
+
+    public function printReturnSelected(\Illuminate\Http\Request $request, $userId){
+        $this->authorize('view', \App\Models\User::class);
+
+        $logIds = $request->input('ids', []);
+
+        // Buscar registros especificos
+        $logs = \App\Models\Actionlog::whereIn('id', $logIds)
+            ->where('action_type', 'checkin from')
+            ->with('item', 'user')
+            -> orderBy('created_at', 'desc')
+            ->get();
+
+        if ($logs->isEmpty()){
+            return redirect()->back()->with('error', 'No se seleccionarion devoluciones válidas');
+        }
+
+        $user = \App\Models\User::findOrFail($userId);
+
+        return view('users.print_return')
+            ->with('users', [ $user ])
+            ->with('logs', $logs)
+            ->with('settings', \App\Models\Setting::getSettings());
+    }
+
+
+    /**
      * Print inventory
      *
      * @since [v1.8]

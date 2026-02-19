@@ -136,6 +136,9 @@ class Accessory extends SnipeModel
     }
 
 
+    public function isDeletable() {
+        return $this->checkouts_count === 0;
+    }
     /**
      * Sets the requestable attribute on the accessory
      *

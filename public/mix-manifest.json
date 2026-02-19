@@ -1,11 +1,11 @@
 {
-    "/js/dist/all.js": "/js/dist/all.js?id=0afea43dc10a8776b9eb1db1bd352d45",
+    "/js/dist/all.js": "/js/dist/all.js?id=584e7af6b28899d4794d25aef996d231",
     "/css/build/overrides.css": "/css/build/overrides.css?id=69b145f1bb0fb5c3de63350ef73207b4",
     "/css/build/app.css": "/css/build/app.css?id=ca045cda8d9164ddb2f7a0ec6fd92a40",
     "/css/build/AdminLTE.css": "/css/build/AdminLTE.css?id=ee0ed88465dd878588ed044eefb67723",
     "/css/dist/all.css": "/css/dist/all.css?id=6b276946025b2c383b315d655683db02",
-    "/css/dist/signature-pad.css": "/css/dist/signature-pad.css?id=6e35c74c14f89f55df49c11fb45a9351",
-    "/css/dist/signature-pad.min.css": "/css/dist/signature-pad.min.css?id=6e35c74c14f89f55df49c11fb45a9351",
+    "/css/dist/signature-pad.css": "/css/dist/signature-pad.css?id=6a89d3cd901305e66ced1cf5f13147f7",
+    "/css/dist/signature-pad.min.css": "/css/dist/signature-pad.min.css?id=6a89d3cd901305e66ced1cf5f13147f7",
     "/js/select2/i18n/af.js": "/js/select2/i18n/af.js?id=4f6fcd73488ce79fae1b7a90aceaecde",
     "/js/select2/i18n/ar.js": "/js/select2/i18n/ar.js?id=65aa8e36bf5da57ff4e3f22a835ab035",
     "/js/select2/i18n/az.js": "/js/select2/i18n/az.js?id=270c257daf8140a0cf23ad5de6f8ed1b",
@@ -77,6 +77,6 @@
     "/js/dist/bootstrap-table-locale-all.min.js": "/js/dist/bootstrap-table-locale-all.min.js?id=d300041b9e5038b45b68e036add83be4",
     "/js/dist/bootstrap-table-en-US.min.js": "/js/dist/bootstrap-table-en-US.min.js?id=6d0de12d91548ba2cd80b868838ce5fa",
     "/js/dist/Chart.min.js": "/js/dist/Chart.min.js?id=9b1ae20c4c7048d6e4a1b2e1aee7fb31",
-    "/css/dist/bootstrap-table.css": "/css/dist/bootstrap-table.css?id=c3daf6fa4168a5314d9fd163b4282a02",
-    "/js/dist/bootstrap-table.js": "/js/dist/bootstrap-table.js?id=9e0d6a62f96a6af64ae6044a6c876a2e"
+    "/css/dist/bootstrap-table.css": "/css/dist/bootstrap-table.css?id=82b56573f8098e439bf14ccb4530de6e",
+    "/js/dist/bootstrap-table.js": "/js/dist/bootstrap-table.js?id=3ca77183321168d36eb1fac73a64e6e5"
 }
